@@ -47,7 +47,7 @@ class UserController {
       if (file) {
         fileReader.readAsDataURL(file);
       } else {
-        resolve('dist/img/boxed-bg.jpg');
+        resolve("dist/img/boxed-bg.jpg");
       }
     });
   }
@@ -60,18 +60,20 @@ class UserController {
         if (field.checked) {
           user[field.name] = field.value;
         }
+      } else if (field.name == "admin") {
+        user[field.name] = field.checked;
       } else {
         user[field.name] = field.value;
       }
     });
-
     return new User(
       user.name,
       user.gender,
       user.birth,
-      user.coutry,
+      user.country,
       user.email,
       user.password,
+      user.photo,
       user.admin
     );
   }
