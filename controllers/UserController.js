@@ -23,7 +23,6 @@ class UserController {
       btn.disabled = true;
 
       let values = this.getValues(this.formUpdateEl);
-      console.log(values);
 
       let index = this.formUpdateEl.dataset.trIndex;
 
@@ -54,7 +53,7 @@ class UserController {
             <td>
             <button type="button" class="btn btn-primary btn-edit btn-xs 
                 btn-flat">Editar</button>
-            <button type="button" class="btn btn-danger btn-xs 
+            <button type="button" class="btn btn-danger btn-delete btn-xs 
                 btn-flat">Excluir</button>
             </td>
           </tr>
@@ -64,7 +63,7 @@ class UserController {
           this.formUpdateEl.reset();
 
           btn.disabled = false;
-          
+
           this.showPanelCreate();
         },
         (e) => {
@@ -187,7 +186,7 @@ class UserController {
         <td>
         <button type="button" class="btn btn-primary btn-edit btn-xs 
             btn-flat">Editar</button>
-        <button type="button" class="btn btn-danger btn-xs 
+        <button type="button" class="btn btn-danger btn-delete btn-xs 
             btn-flat">Excluir</button>
         </td>
       </tr>
@@ -201,6 +200,13 @@ class UserController {
   }
 
   addEventsTr(tr) {
+    tr.querySelector(".btn-delete").addEventListener("click", (e) => {
+      if (confirm("Deseja realmente excluir")) {
+        tr.remove();
+        this.updateCount();
+      }
+    });
+
     tr.querySelector(".btn-edit").addEventListener("click", (e) => {
       let json = JSON.parse(tr.dataset.user);
 
