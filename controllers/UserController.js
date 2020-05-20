@@ -40,7 +40,7 @@ class UserController {
           } else {
             result._photo = content;
           }
-
+          result._register = new Date(userOld._register);
           this.updateUser(tr, result);
 
           tr.dataset.user = JSON.stringify(result);
@@ -179,8 +179,12 @@ class UserController {
 
   getUsersStorage() {
     let users = [];
-    if (sessionStorage.getItem("users")) {
-      users = JSON.parse(sessionStorage.getItem("users"));
+    if (localStorage.getItem("users")) {
+      try {
+      users = JSON.parse(localStorage.getItem("users"));}
+      catch (e){
+        localStorage.clear();
+      }
     }
     return users;
   }
@@ -202,19 +206,19 @@ class UserController {
 
     users.push(data);
 
-    sessionStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("users", JSON.stringify(users));
   }
 
   updateUser(tr, userData){
     let users = this.getUsersStorage();
     users[tr.sectionRowIndex] = userData;
-    sessionStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("users", JSON.stringify(users));
   }
 
   remove(trIndex) {
     let users = this.getUsersStorage();
     users.splice(trIndex, 1);
-    sessionStorage.setItem("users", JSON.stringify(users));
+    localStorage.setItem("users", JSON.stringify(users));
   }
 
   addLine(dataUser) {
