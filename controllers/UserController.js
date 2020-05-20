@@ -28,7 +28,7 @@ class UserController {
       let index = this.formUpdateEl.dataset.trIndex;
 
       let tr = this.tableEl.rows[index];
-      
+
       let users = this.getUsersStorage();
 
       let userOld = JSON.parse(tr.dataset.user);
@@ -45,7 +45,7 @@ class UserController {
 
           users[index] = result;
           sessionStorage.setItem("users", JSON.stringify(users));
-          
+
           tr.dataset.user = JSON.stringify(result);
 
           tr.innerHTML = `
@@ -96,7 +96,7 @@ class UserController {
       this.getPhoto(this.formEl).then(
         (content) => {
           values.photo = content;
-          
+
           this.insert(values);
 
           this.addLine(values);
@@ -179,7 +179,7 @@ class UserController {
       user.admin
     );
   }
-  
+
   getUsersStorage() {
     let users = [];
     if (sessionStorage.getItem("users")) {
@@ -195,7 +195,7 @@ class UserController {
       let user = new User();
 
       user.loadFromJSON(dataUser);
-      
+
       this.addLine(user);
     });
   }
@@ -205,6 +205,12 @@ class UserController {
 
     users.push(data);
 
+    sessionStorage.setItem("users", JSON.stringify(users));
+  }
+
+  remove(trIndex) {
+    let users = this.getUsersStorage();
+    users.splice(trIndex, 1);
     sessionStorage.setItem("users", JSON.stringify(users));
   }
 
@@ -239,6 +245,7 @@ class UserController {
   addEventsTr(tr) {
     tr.querySelector(".btn-delete").addEventListener("click", (e) => {
       if (confirm("Deseja realmente excluir")) {
+        this.remove(tr.sectionRowIndex);
         tr.remove();
         this.updateCount();
       }
