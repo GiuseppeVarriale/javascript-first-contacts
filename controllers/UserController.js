@@ -28,6 +28,8 @@ class UserController {
       let index = this.formUpdateEl.dataset.trIndex;
 
       let tr = this.tableEl.rows[index];
+      
+      let users = this.getUsersStorage();
 
       let userOld = JSON.parse(tr.dataset.user);
 
@@ -41,6 +43,9 @@ class UserController {
             result._photo = content;
           }
 
+          users[index] = result;
+          sessionStorage.setItem("users", JSON.stringify(users));
+          
           tr.dataset.user = JSON.stringify(result);
 
           tr.innerHTML = `
