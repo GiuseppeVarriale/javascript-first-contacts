@@ -29,8 +29,6 @@ class UserController {
 
       let tr = this.tableEl.rows[index];
 
-      let users = this.getUsersStorage();
-
       let userOld = JSON.parse(tr.dataset.user);
 
       let result = Object.assign({}, userOld, values);
@@ -43,8 +41,7 @@ class UserController {
             result._photo = content;
           }
 
-          users[index] = result;
-          sessionStorage.setItem("users", JSON.stringify(users));
+          this.updateUser(tr, result);
 
           tr.dataset.user = JSON.stringify(result);
 
@@ -205,6 +202,12 @@ class UserController {
 
     users.push(data);
 
+    sessionStorage.setItem("users", JSON.stringify(users));
+  }
+
+  updateUser(tr, userData){
+    let users = this.getUsersStorage();
+    users[tr.sectionRowIndex] = userData;
     sessionStorage.setItem("users", JSON.stringify(users));
   }
 
