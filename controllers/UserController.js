@@ -41,12 +41,13 @@ class UserController {
             result._photo = content;
           }
           result._register = new Date(userOld._register);
-          
-          this.updateUser(tr, result);
 
           let user = new User();
+
           user.loadFromJSON(result);
-          
+
+          user.save();
+
           this.getTr(user, tr);
 
           this.updateCount();
@@ -81,7 +82,7 @@ class UserController {
         (content) => {
           values.photo = content;
 
-          this.insert(values);
+          values.save();
 
           this.addLine(values);
 
@@ -164,20 +165,9 @@ class UserController {
     );
   }
 
-  getUsersStorage() {
-    let users = [];
-    if (localStorage.getItem("users")) {
-      try {
-        users = JSON.parse(localStorage.getItem("users"));
-      } catch (e) {
-        localStorage.clear();
-      }
-    }
-    return users;
-  }
 
   selectAll() {
-    let users = this.getUsersStorage();
+    let users = User.getUsersStorage();
 
     users.forEach((dataUser) => {
       let user = new User();
@@ -186,26 +176,6 @@ class UserController {
 
       this.addLine(user);
     });
-  }
-
-  insert(data) {
-    let users = this.getUsersStorage();
-
-    users.push(data);
-
-    localStorage.setItem("users", JSON.stringify(users));
-  }
-
-  updateUser(tr, userData) {
-    let users = this.getUsersStorage();
-    users[tr.sectionRowIndex] = userData;
-    localStorage.setItem("users", JSON.stringify(users));
-  }
-
-  remove(trIndex) {
-    let users = this.getUsersStorage();
-    users.splice(trIndex, 1);
-    localStorage.setItem("users", JSON.stringify(users));
   }
 
   addLine(dataUser) {
@@ -219,7 +189,7 @@ class UserController {
     if (tr == null) tr = document.createElement("tr");
 
     tr.dataset.user = JSON.stringify(dataUser);
-    
+
     tr.innerHTML = `
       <tr>
         <td><img src="${dataUser.photo}" alt="User Image" 
@@ -227,7 +197,7 @@ class UserController {
         <td>${dataUser.name}</td>
         <td>${dataUser.email}</td>
         <td>${dataUser.admin ? "Sim" : "Não"}</td>
-        <td>${Utils.dateFormat(dataUser.register)}</td>
+        <td>${dataUser.register.toLocaleString()}</td>
         <td>
         <button type="button" class="btn btn-primary btn-edit btn-xs 
             btn-flat">Editar</button>
@@ -244,7 +214,9 @@ class UserController {
   addEventsTr(tr) {
     tr.querySelector(".btn-delete").addEventListener("click", (e) => {
       if (confirm("Deseja realmente excluir")) {
-        this.remove(tr.sectionRowIndex);
+        let user = new User();
+        user.loadFromJSON(JSON.parse(tr.dataset.user));
+        user.remove();
         tr.remove();
         this.updateCount();
       }
